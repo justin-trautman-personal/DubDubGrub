@@ -29,6 +29,44 @@ final class ProfileViewModel: ObservableObject {
 		return true
 	}
 	
+	func createProfile() {
+		guard isValidProfile() else {
+			alertItem = AlertContext.invalidProfile
+			return
+		}
+		
+		let profileRecord = createProfileRecord()
+
+		CKContainer.default().fetchUserRecordID { recordId, error in
+			guard let recordId = recordId, error == nil else {
+				print(error?.localizedDescription ?? "")
+				return
+			}
+			
+			CKContainer.default().publicCloudDatabase.fetch(withRecordID: recordId) { userRecord, error in
+				guard let userRecord = userRecord, error == nil else {
+					print(error?.localizedDescription ?? "")
+					return
+				}
+				
+				userRecord["userProfile"] = CKRecord.Reference(recordID: profileRecord.recordID, action: .none)
+				
+				let operation = CKModifyRecordsOperation(recordsToSave: [userRecord, profileRecord])
+				
+				operation.modifyRecordsCompletionBlock = { savedRecords, _, error in
+					guard let savedRecords = savedRecords, error == nil else {
+						print(error?.localizedDescription ?? "")
+						return
+					}
+					
+					print(savedRecords)
+				}
+				
+				CKContainer.default().publicCloudDatabase.add(operation)
+			}
+		}
+	}
+	
 	func getProfile() {
 		CKContainer.default().fetchUserRecordID { recordId, error in
 			guard let recordId = recordId, error == nil else {
@@ -64,46 +102,14 @@ final class ProfileViewModel: ObservableObject {
 		}
 	}
 	
-	func createProfile() {
-		guard isValidProfile() else {
-			alertItem = AlertContext.invalidProfile
-			return
-		}
-		
+	private func createProfileRecord() -> CKRecord {
 		let profileRecord = CKRecord(recordType: RecordType.profile)
 		profileRecord[DDGProfile.kFirstName]   = firstName
 		profileRecord[DDGProfile.kLastName]    = lastName
 		profileRecord[DDGProfile.kCompanyName] = companyName
 		profileRecord[DDGProfile.kBio]  		 = bio
-		profileRecord[DDGProfile.kAvatar]       = avatar.convertToCKAsset()
+		profileRecord[DDGProfile.kAvatar]      = avatar.convertToCKAsset()
 		
-		CKContainer.default().fetchUserRecordID { recordId, error in
-			guard let recordId = recordId, error == nil else {
-				print(error?.localizedDescription ?? "")
-				return
-			}
-			
-			CKContainer.default().publicCloudDatabase.fetch(withRecordID: recordId) { userRecord, error in
-				guard let userRecord = userRecord, error == nil else {
-					print(error?.localizedDescription ?? "")
-					return
-				}
-				
-				userRecord["userProfile"] = CKRecord.Reference(recordID: profileRecord.recordID, action: .none)
-				
-				let operation = CKModifyRecordsOperation(recordsToSave: [userRecord, profileRecord])
-				
-				operation.modifyRecordsCompletionBlock = { savedRecords, _, error in
-					guard let savedRecords = savedRecords, error == nil else {
-						print(error?.localizedDescription ?? "")
-						return
-					}
-					
-					print(savedRecords)
-				}
-				
-				CKContainer.default().publicCloudDatabase.add(operation)
-			}
-		}
+		return profileRecord
 	}
 }
