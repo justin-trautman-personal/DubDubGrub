@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D04BF0A82824ACF60066CBCD /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D04BF0A72824ACF60066CBCD /* LoadingView.swift */; };
 		D07D7B32282326F7001114FB /* CKRecord+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = D07D7B31282326F7001114FB /* CKRecord+Ext.swift */; };
 		D07D7B34282327E6001114FB /* AlertItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = D07D7B33282327E6001114FB /* AlertItem.swift */; };
 		D07D7B3728232D3B001114FB /* LocationMapViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D07D7B3628232D3B001114FB /* LocationMapViewModel.swift */; };
@@ -41,6 +42,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		D04BF0A72824ACF60066CBCD /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		D07D7B31282326F7001114FB /* CKRecord+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CKRecord+Ext.swift"; sourceTree = "<group>"; };
 		D07D7B33282327E6001114FB /* AlertItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertItem.swift; sourceTree = "<group>"; };
 		D07D7B3628232D3B001114FB /* LocationMapViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationMapViewModel.swift; sourceTree = "<group>"; };
@@ -251,6 +253,7 @@
 				D0B5F859282437ED009B0206 /* Buttons */,
 				D0ED896B28137681009B4CA7 /* AvatarView.swift */,
 				D0B5F857282434C0009B0206 /* LogoView.swift */,
+				D04BF0A72824ACF60066CBCD /* LoadingView.swift */,
 			);
 			path = CustomViews;
 			sourceTree = "<group>";
@@ -350,6 +353,7 @@
 				D07D7B3C28234A0E001114FB /* CKAsset+Ext.swift in Sources */,
 				D0B5F8562824347B009B0206 /* OnboardView.swift in Sources */,
 				D0ED897228137962009B4CA7 /* DDGButton.swift in Sources */,
+				D04BF0A82824ACF60066CBCD /* LoadingView.swift in Sources */,
 				D0B5F86028247220009B0206 /* UIImage+Ext.swift in Sources */,
 				D0ED896C28137681009B4CA7 /* AvatarView.swift in Sources */,
 				D0ED894C28134979009B4CA7 /* DubDubGrubApp.swift in Sources */,

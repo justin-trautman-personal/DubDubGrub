@@ -37,4 +37,28 @@ struct AlertContext {
 	static let invalidProfile = AlertItem(title: Text("Invalid Profile"),
 												message: Text("All fields are required as well as profile photo. Your bio must be less than 100 characters. Please try again."),
 												dismissButton: .default(Text("OK")))
+    
+    static let noUserRecord = AlertItem(title: Text("No User Record"),
+                                                message: Text("You must log into iCloud on your phone in order to utilize DubDubGrub's Profile. Please log in from Settings."),
+                                                dismissButton: .default(Text("OK")))
+    
+    static let createProfileSuccess = AlertItem(title: Text("Profile Created Successfully!"),
+                                                message: Text("Your profile has successfully been created."),
+                                                dismissButton: .default(Text("OK")))
+    
+    static let createProfileFailure = AlertItem(title: Text("Failed to create profile"),
+                                                message: Text("We were unable to create your profile at this time."),
+                                                dismissButton: .default(Text("OK")))
+    
+    static let unableToGetProfile = AlertItem(title: Text("Unable to retrieve profile"),
+                                                message: Text("We were unable to retrieve your profile at this time."),
+                                                dismissButton: .default(Text("OK")))
+    
+    static let updateProfileSuccess = AlertItem(title: Text("Profile Update Success!"),
+                                                message: Text("Your DubDubGrub profile was updated successfully."),
+                                                dismissButton: .default(Text("OK")))
+    
+    static let updateProfileFailure = AlertItem(title: Text("Profile Update Failed"),
+                                                message: Text("We were unable to update your profile at this time."),
+                                                dismissButton: .default(Text("OK")))
 }
