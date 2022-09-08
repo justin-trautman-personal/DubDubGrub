@@ -10,9 +10,9 @@ import CloudKit
 struct MockData {
 	
 	static var location: CKRecord {
-		let record 						   = CKRecord(recordType: RecordType.location)
-		record[DDGLocation.kName]		   = "Sean's Bar and Grill"
-		record[DDGLocation.kAddress] 	   = "123 Main Street"
+		let record 				         = CKRecord(recordType: RecordType.location)
+		record[DDGLocation.kName]		 = "Sean's Bar and Grill"
+		record[DDGLocation.kAddress] 	 = "123 Main Street"
 		record[DDGLocation.kDescription] = """
 											This is a test description. Isn't it awesome, not sure how long to make it to test the three lines?
 											Maybe we should add some more to be safe.
@@ -23,4 +23,14 @@ struct MockData {
 		
 		return record
 	}
+    
+    static var profile: CKRecord {
+        let record                      = CKRecord(recordType: RecordType.profile)
+        record[DDGProfile.kFirstName]   = "Test"
+        record[DDGProfile.kLastName]    = "User"
+        record[DDGProfile.kCompanyName] = "Best Company Ever"
+        record[DDGProfile.kBio]         = "This is my bio, I hope it's not too long I can't check character count."
+        
+        return record
+    }
 }

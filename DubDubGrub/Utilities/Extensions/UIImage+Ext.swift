@@ -25,7 +25,7 @@ extension UIImage {
 		// write image data to the location on disk
 		guard let imageData = jpegData(compressionQuality: 0.25) else { return nil }
 		
-		// create our CKAsset with that fileurl
+		// create our CKAsset with that file url
 		do {
 			try imageData.write(to: fileUrl)
 			return CKAsset(fileURL: fileUrl)

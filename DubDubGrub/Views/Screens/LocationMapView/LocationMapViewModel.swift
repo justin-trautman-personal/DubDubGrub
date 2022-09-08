@@ -5,14 +5,16 @@
 //  Created by Justin Trautman on 5/4/22.
 //
 
+import CloudKit
 import Foundation
 import SwiftUI
 import MapKit
 
 @MainActor
-final class LocationMapViewModel: NSObject, ObservableObject {
+final class LocationMapViewModel: ObservableObject {
 	
-	@Published var isShowingOnboardView = false
+    @Published var checkedInProfiles: [CKRecord.ID: Int] = [:]
+    @Published var isShowingDetailView = false
 	@Published var alertItem: AlertItem?
 	
 	@Published var region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 37.331516,
@@ -20,65 +22,30 @@ final class LocationMapViewModel: NSObject, ObservableObject {
 											   span: MKCoordinateSpan(latitudeDelta: 0.01,
 																	  longitudeDelta: 0.01))
 	
-	var deviceLocationManager: CLLocationManager?
-	let kHasSeenOnboardView = "hasSeenOnboardView"
-	
-	var hasSeenOnboardView: Bool {
-		UserDefaults.standard.bool(forKey: kHasSeenOnboardView)
-	}
-	
-	func runStartupChecks() {
-		if !hasSeenOnboardView {
-			isShowingOnboardView = true
-			UserDefaults.standard.set(true, forKey: kHasSeenOnboardView)
-		} else {
-			checkIfLocationServicesIsEnabled()
-		}
-	}
-	
-	func checkIfLocationServicesIsEnabled() {
-		if CLLocationManager.locationServicesEnabled() {
-			deviceLocationManager = CLLocationManager()
-			deviceLocationManager!.delegate = self
-		} else {
-			alertItem = AlertContext.locationDisabled
-		}
-	}
-	
-	func checkLocationAuthorization() {
-		guard let manager = deviceLocationManager else { return }
-		
-		switch manager.authorizationStatus {
-			case .notDetermined:
-				manager.requestWhenInUseAuthorization()
-			case .restricted:
-				alertItem = AlertContext.locationRestricted
-			case .denied:
-				alertItem = AlertContext.locationDenied
-			case .authorizedAlways, .authorizedWhenInUse:
-				break
-			@unknown default:
-				break
-		}
- 	}
-	
 	func getLocations(for locationManager: LocationManager) {
-        CloudKitManager.shared.getLocations { [self] result in
-			DispatchQueue.main.async {
+        CloudKitManager.shared.getLocations { result in
+			DispatchQueue.main.async { [self] in
 				switch result {
-					case .failure:
-						alertItem = AlertContext.unableToGetLocations
-						
-					case let .success(locations):
-						locationManager.locations = locations
+                case let .success(locations):
+                    locationManager.locations = locations
+                    case .failure:
+                        alertItem = AlertContext.unableToGetLocations
 				}
 			}
 		}
 	}
+    
+    func getCheckInCounts() {
+        CloudKitManager.shared.getCheckedInProfilesCount { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let checkedInProfiles):
+                    self.checkedInProfiles = checkedInProfiles
+                case .failure:
+                    break
+                }
+            }
+        }
+    }
 }
 
-extension LocationMapViewModel: CLLocationManagerDelegate {
-	func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-		checkLocationAuthorization()
-	}
-}

@@ -18,6 +18,7 @@ final class ProfileViewModel: ObservableObject {
 	@Published var avatar		 		= PlaceholderImage.avatar
 	@Published var isShowingPhotoPicker = false
     @Published var isLoading            = false
+    @Published var isCheckedIn          = false
 	@Published var alertItem: AlertItem?
     
     private var existingProfileRecord: CKRecord? {
@@ -37,6 +38,53 @@ final class ProfileViewModel: ObservableObject {
 		
 		return true
 	}
+    
+    func getCheckedInStatus() {
+        guard let profileRecordID = CloudKitManager.shared.profileRecordID else { return }
+        
+        CloudKitManager.shared.fetchRecord(with: profileRecordID) { result in
+            DispatchQueue.main.async { [self] in
+                switch result {
+                case .success(let record):
+                    if let _ = record[DDGProfile.kIsCheckedIn] as? CKRecord.Reference {
+                        isCheckedIn = true
+                    } else {
+                        isCheckedIn = false
+                    }
+                case .failure(_):
+                    break
+                }
+            }
+        }
+    }
+    
+    func checkOut() {
+        guard let profileID = CloudKitManager.shared.profileRecordID else {
+            alertItem = AlertContext.unableToGetProfile
+            return
+        }
+        
+        CloudKitManager.shared.fetchRecord(with: profileID) { result in
+            switch result {
+            case .success(let record):
+                record[DDGProfile.kIsCheckedIn] = nil
+                record[DDGProfile.kIsCheckedInNilCheck] = nil
+                
+                CloudKitManager.shared.save(record: record) { result in
+                    DispatchQueue.main.async { [self] in
+                        switch result {
+                        case .success(_):
+                            isCheckedIn = false
+                        case .failure(_):
+                            alertItem = AlertContext.unableToGetCheckInOrOut
+                        }
+                    }
+                }
+            case .failure(_):
+                DispatchQueue.main.async { self.alertItem = AlertContext.unableToGetCheckInOrOut }
+            }
+        }
+    }
 	
     func createProfile() {
         guard isValidProfile() else {
@@ -63,6 +111,7 @@ final class ProfileViewModel: ObservableObject {
                 case .success(let records):
                     for record in records where record.recordType == RecordType.profile {
                         existingProfileRecord = record
+                        CloudKitManager.shared.profileRecordID = record.recordID
                     }
                     alertItem = AlertContext.createProfileSuccess
                 case .failure(_):
@@ -101,6 +150,8 @@ final class ProfileViewModel: ObservableObject {
                     companyName = profile.companyName
                     bio         = profile.bio
                     avatar      = profile.createAvatarImage()
+                    
+                    CloudKitManager.shared.profileRecordID = record.recordID
                     
                 case .failure(_):
                     alertItem = AlertContext.unableToGetProfile
